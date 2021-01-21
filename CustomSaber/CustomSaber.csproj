@@ -133,10 +133,6 @@
     <Compile Include="Data\SaberExtensions\AccuracyReachedEvent.cs" />
     <Compile Include="Data\SaberExtensions\ComboReachedEvent.cs" />
     <Compile Include="Data\SaberExtensions\CustomTrails.cs" />
-    <Compile Include="Dynamic Bones\DynamicBone.cs" />
-    <Compile Include="Dynamic Bones\DynamicBoneCollider.cs" />
-    <Compile Include="Dynamic Bones\DynamicBoneColliderBase.cs" />
-    <Compile Include="Dynamic Bones\DynamicBonePlaneCollider.cs" />
     <Compile Include="HarmonyPatches\TrailElementCollection.cs" />
     <Compile Include="HarmonyPatches\SaberTrail.cs" />
     <Compile Include="Settings\UI\SaberSettingsViewController.cs" />
@@ -184,6 +180,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetPath)" "$(BeatSaberDir)\Plugins"</PostBuildEvent>
+    <PostBuildEvent>xcopy /s/y "D:\CSharp Projects\CustomSaberPlugin\CustomSaber\bin\Debug\CustomSaber.dll"  "D:\SteamLibrary\steamapps\common\Beat Saber\Plugins"</PostBuildEvent>
   </PropertyGroup>
 </Project>
