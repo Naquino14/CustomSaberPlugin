@@ -1,3 +1,5 @@
+hello pls no pull this repo bc its for personal purposes k thx bye
+
 # Custom Sabers
 - Adds the ability to use Custom Sabers in Beat Saber
 - Sabers are loaded from the CustomSabers folder in your beat saber directory

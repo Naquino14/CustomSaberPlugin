@@ -58,3 +58,8 @@ bld/
 #######################
 /UnityProject/Library/*
 /UnityProject/Temp/*
+CustomSaber-Editor/
+CustomSaber-Editor/CustomSaber-Editor.csproj
+CustomSaber-Editor/Properties/AssemblyInfo.cs
+CustomSaber-Editor/Dynamic Bones/DYNAMIC BONE SCRIPTS GOES HERE
+CustomSaber-Editor/CustomSaber-Editor.csproj
