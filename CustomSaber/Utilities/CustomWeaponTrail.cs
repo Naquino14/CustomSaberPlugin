@@ -24,6 +24,7 @@ namespace CustomSaber.Utilities
 
         protected Transform _pointStart;
         protected Transform _pointEnd;
+        private float _trailDuration;
         protected Color trailTintColor;
 
         public Color color
@@ -78,7 +79,7 @@ namespace CustomSaber.Utilities
             _trailRenderer = Instantiate<SaberTrailRenderer>(TrailRendererPrefab, Vector3.zero, Quaternion.identity);
         }
 
-        public override void OnEnable()
+        public void OnEnable()
         {
             base.OnEnable();
             StartCoroutine(replaceMaterialCoroutine());
@@ -115,7 +116,7 @@ namespace CustomSaber.Utilities
             StartCoroutine(replaceMaterialCoroutine());
         }
 
-        public override void ResetTrailData()
+        public void ResetTrailData()
         {
             if (_trailElementCollection != null)
             {
@@ -124,15 +125,26 @@ namespace CustomSaber.Utilities
             }
         }
 
-        public override void Init()
+        public void Init()
         {
             // nop
         }
 
         Vector3 _lastPointStart;
         Vector3 _lastPointEnd;
+        private bool _inited;
+        private float _whiteSectionMaxDuration;
+        private float _lastZScale;
+        private object _granularity;
+        private SaberTrailRenderer _trailRendererPrefab;
+        private SaberTrailRenderer _trailRenderer;
+        private TrailElementCollection _trailElementCollection;
+        private float _lastTrailElementTime;
+        private int _framesPassed;
+        private int _samplingFrequency;
+        private float _sampleStep;
 
-        public override void LateUpdate()
+        public void LateUpdate()
         {
             if (_pointStart == null || _pointEnd == null)
             {
@@ -170,7 +182,7 @@ namespace CustomSaber.Utilities
                     float trailWidth = (_pointEnd.position - _pointStart.position).magnitude;
                     _whiteSectionMaxDuration = Mathf.Min(_whiteSectionMaxDuration, _trailDuration);
                     _lastZScale = transform.lossyScale.z;
-                    _trailRenderer.Init(trailWidth, _trailDuration, _granularity, _whiteSectionMaxDuration);
+                    _trailRenderer.Init(trailWidth, _trailDuration, (int)_granularity, _whiteSectionMaxDuration);
 
                     _lastPointStart = _pointStart.position;
                     _lastPointEnd = _pointEnd.position;
