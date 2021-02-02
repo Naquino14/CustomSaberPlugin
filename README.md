@@ -1,4 +1,4 @@
-hello feel free to pull this repo if you want
+hello feel free to pull this repo if you want, just note it doesnt include dynamic bone stuff
 
 # Custom Sabers
 - Adds the ability to use Custom Sabers in Beat Saber
