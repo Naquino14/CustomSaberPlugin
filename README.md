@@ -1,4 +1,4 @@
-hello pls no pull this repo bc its for personal purposes k thx bye
+hello feel free to pull this repo if you want
 
 # Custom Sabers
 - Adds the ability to use Custom Sabers in Beat Saber
