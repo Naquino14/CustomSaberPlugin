@@ -42,10 +42,7 @@ namespace CustomSaber
 
         private void OnGameSceneLoaded()
         {
-            if (BS_Utils.Plugin.LevelData.Mode != BS_Utils.Gameplay.Mode.Multiplayer)
-            {
-                SaberScript.Load();
-            }
+            SaberScript.Load();
         }
 
         private void Load()
