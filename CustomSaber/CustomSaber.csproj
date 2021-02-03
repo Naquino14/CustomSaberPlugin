@@ -147,7 +147,6 @@
     <Compile Include="Settings\Configuration.cs" />
     <Compile Include="Settings\UI\SabersFlowCoordinator.cs" />
     <Compile Include="Settings\UI\SaberListViewController.cs" />
-    <Compile Include="Settings\UI\SaberPreviewViewController.cs" />
     <Compile Include="Settings\UI\SettingsUI.cs" />
     <Compile Include="Settings\Utilities\PluginConfig.cs" />
     <Compile Include="Utilities\DefaultSaberGrabber.cs" />
@@ -172,7 +171,6 @@
     <EmbeddedResource Include="Resources\fa-magic-error.png" />
     <EmbeddedResource Include="Resources\icon.png" />
     <EmbeddedResource Include="Settings\UI\Views\saberList.bsml" />
-    <EmbeddedResource Include="Settings\UI\Views\saberPreview.bsml" />
     <EmbeddedResource Include="Settings\UI\Views\saberSettings.bsml" />
   </ItemGroup>
   <ItemGroup>
