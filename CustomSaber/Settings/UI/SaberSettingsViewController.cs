@@ -42,6 +42,20 @@ namespace CustomSaber.Settings.UI
             set => Configuration.ShowSabersInSaberMenu = value;
         }
 
+        [UIAction("sabers-in-menu-changed")]
+        public void OnSabersInMenuChanged(bool value)
+        {
+            if (value)
+            {
+                SaberListViewController.Instance?.GenerateHandheldSaberPreview();
+            }
+            else
+            {
+                SaberListViewController.Instance?.ClearHandheldSabers();
+                SaberListViewController.Instance?.ShowMenuHandles();
+            }
+        }
+
         [UIValue("disable-whitestep")]
         public bool DisableWhitestep
         {
@@ -72,5 +86,11 @@ namespace CustomSaber.Settings.UI
 
         [UIAction("percent-formatter")]
         public string OnFormatPercent(float obj) => $"{obj * 100}%";
+
+        [UIAction("refreshPreview")]
+        public void RefreshPreview()
+        {
+            StartCoroutine(SaberListViewController.Instance.GenerateSaberPreview(SaberAssetLoader.SelectedSaber));
+        }
     }
 }

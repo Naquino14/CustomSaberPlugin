@@ -44,6 +44,8 @@ namespace CustomSaber.Settings.UI
             SaberAssetLoader.SelectedSaber = row;
             Configuration.CurrentlySelectedSaber = SaberAssetLoader.CustomSabers[row].FileName;
             customSaberChanged?.Invoke(SaberAssetLoader.CustomSabers[row]);
+
+            StartCoroutine(GenerateSaberPreview(row));
         }
 
         [UIAction("reloadSabers")]
@@ -97,6 +99,12 @@ namespace CustomSaber.Settings.UI
 
             Instance = this;
 
+            if (!preview)
+            {
+                preview = new GameObject("Preview");
+                preview.transform.position = new Vector3(2.2f, 1.3f, 1.0f);
+                preview.transform.Rotate(0.0f, 330.0f, 0.0f);
+            }
 
             Select(customListTableData.tableView, SaberAssetLoader.SelectedSaber);
         }
@@ -104,6 +112,54 @@ namespace CustomSaber.Settings.UI
         protected override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
         {
             base.DidDeactivate(removedFromHierarchy, screen);
+            ClearPreview();
+        }
+
+        public IEnumerator GenerateSaberPreview(int selectedSaber)
+        {
+            if (!isGeneratingPreview)
+            {
+                yield return new WaitUntil(() => DefaultSaberGrabber.isCompleted);
+                try
+                {
+                    isGeneratingPreview = true;
+                    ClearSabers();
+
+                    var customSaber = SaberAssetLoader.CustomSabers[selectedSaber];
+                    if (customSaber != null)
+                    {
+
+                        previewSabers = CreatePreviewSaber(customSaber.Sabers, preview.transform, sabersPos);
+                        PositionPreviewSaber(saberLeftPos, previewSabers?.transform.Find("LeftSaber").gameObject);
+                        PositionPreviewSaber(saberRightPos, previewSabers?.transform.Find("RightSaber").gameObject);
+
+                        previewSabers?.transform.Find("LeftSaber").gameObject.SetActive(true);
+                        previewSabers?.transform.Find("LeftSaber").gameObject.gameObject.AddComponent<DummySaber>();
+                        previewSabers?.transform.Find("RightSaber").gameObject.SetActive(true);
+                        previewSabers?.transform.Find("RightSaber").gameObject.gameObject.AddComponent<DummySaber>();
+
+                        if (Configuration.ShowSabersInSaberMenu)
+                            GenerateHandheldSaberPreview();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.log.Error(ex);
+                }
+                finally
+                {
+                    isGeneratingPreview = false;
+                }
+            }
+        }
+
+        private GameObject CreatePreviewSaber(GameObject saber, Transform transform, Vector3 localPosition)
+        {
+            if (!saber) return null;
+            var saberObject = InstantiateGameObject(saber, transform);
+            saberObject.name = "Preview Saber Object";
+            PositionPreviewSaber(localPosition, saberObject);
+            return saberObject;
         }
 
         SaberMovementData _leftMovementData = new SaberMovementData();
@@ -111,6 +167,144 @@ namespace CustomSaber.Settings.UI
         VRController _leftController;
         VRController _rightController;
         SaberTrailRenderer _trailRendererPrefab;
+
+        public void GenerateHandheldSaberPreview()
+        {
+            if (Environment.CommandLine.Contains("fpfc")) return;
+            var customSaber = SaberAssetLoader.CustomSabers[SaberAssetLoader.SelectedSaber];
+            if (customSaber == null || !customSaber.Sabers || preview == null) return;
+            var controllers = Resources.FindObjectsOfTypeAll<VRController>();
+            var sabers = CreatePreviewSaber(customSaber.Sabers, preview.transform, sabersPos);
+            var colorManager = Resources.FindObjectsOfTypeAll<ColorManager>().First();
+
+            try
+            {
+                foreach (var collider in sabers.GetComponentsInChildren<Collider>())
+                {
+                    collider.enabled = false;
+                }
+
+                if (_trailRendererPrefab == null)
+                {
+                    foreach (var trail in Resources.FindObjectsOfTypeAll<SaberTrail>())
+                    {
+                        _trailRendererPrefab = trail.GetField<SaberTrailRenderer, SaberTrail>("_trailRendererPrefab");
+                        if (_trailRendererPrefab != null)
+                        {
+                            break;
+                        }
+                    }
+                }
+
+                foreach (var controller in controllers)
+                {
+                    if (controller?.node == XRNode.LeftHand)
+                    {
+                        _leftController = controller;
+
+                        leftSaber = sabers?.transform.Find("LeftSaber").gameObject;
+                        if (!leftSaber) continue;
+
+                        leftSaber.transform.parent = controller.transform;
+                        leftSaber.transform.position = controller.transform.position;
+                        leftSaber.transform.rotation = controller.transform.rotation;
+
+                        leftSaber.SetActive(true);
+
+                        var trails = leftSaber.GetComponentsInChildren<CustomTrail>();
+
+                        if (trails == null || trails.Count() == 0)
+                        {
+                            SaberTrail saberTrail = leftSaber.AddComponent<SaberTrail>();
+                            saberTrail.SetField("_trailRenderer", Instantiate(_trailRendererPrefab, Vector3.zero, Quaternion.identity));
+                            saberTrail.Setup(colorManager.ColorForSaberType(SaberType.SaberA), _leftMovementData);
+
+                            if (Configuration.OverrideTrailLength)
+                            {
+                                float length = Configuration.TrailLength * 30;
+                                saberTrail.SetField("_trailDuration", length / 75f);
+                            }
+                            if (Configuration.DisableWhitestep)
+                            {
+                                saberTrail.SetField("_whiteSectionMaxDuration", 0f);
+                            }
+                        }
+                        else
+                        {
+                            foreach (var trail in trails)
+                            {
+                                trail.Length = (Configuration.OverrideTrailLength) ? (int)(trail.Length * Configuration.TrailLength) : trail.Length;
+                                if (trail.Length < 2 || !trail.PointStart || !trail.PointEnd) continue;
+                                {
+                                    leftSaber.AddComponent<CustomWeaponTrail>().Init(_trailRendererPrefab, colorManager, trail.PointStart, trail.PointEnd,
+                                        trail.TrailMaterial, trail.TrailColor, trail.Length, trail.Granularity, trail.MultiplierColor, trail.colorType);
+                                }
+                            }
+                        }
+
+                        leftSaber.AddComponent<DummySaber>();
+
+                        controller.transform.Find("MenuHandle")?.gameObject.SetActive(false);
+                    }
+                    else if (controller?.node == XRNode.RightHand)
+                    {
+                        _rightController = controller;
+
+                        rightSaber = sabers?.transform.Find("RightSaber").gameObject;
+                        if (!rightSaber) continue;
+
+                        rightSaber.transform.parent = controller.transform;
+                        rightSaber.transform.position = controller.transform.position;
+                        rightSaber.transform.rotation = controller.transform.rotation;
+
+                        rightSaber.SetActive(true);
+
+                        var trails = rightSaber.GetComponentsInChildren<CustomTrail>();
+
+                        if (trails == null || trails.Count() == 0)
+                        {
+                            SaberTrail saberTrail = rightSaber.AddComponent<SaberTrail>();
+                            saberTrail.SetField("_trailRenderer", Instantiate(_trailRendererPrefab, Vector3.zero, Quaternion.identity));
+                            saberTrail.Setup(colorManager.ColorForSaberType(SaberType.SaberB), _rightMovementData);
+
+                            if (Configuration.OverrideTrailLength)
+                            {
+                                float length = Configuration.TrailLength * 30;
+                                saberTrail.SetField("_trailDuration", length / 75f);
+                            }
+                            if (Configuration.DisableWhitestep)
+                            {
+                                saberTrail.SetField("_whiteSectionMaxDuration", 0f);
+                            }
+                        }
+                        else
+                        {
+                            foreach (var trail in trails)
+                            {
+                                trail.Length = (Configuration.OverrideTrailLength) ? (int)(trail.Length * Configuration.TrailLength) : trail.Length;
+                                if (trail.Length < 2 || !trail.PointStart || !trail.PointEnd) continue;
+                                rightSaber.AddComponent<CustomWeaponTrail>().Init(_trailRendererPrefab, colorManager, trail.PointStart, trail.PointEnd,
+                                    trail.TrailMaterial, trail.TrailColor, trail.Length, trail.Granularity, trail.MultiplierColor, trail.colorType);
+                            }
+                        }
+
+                        rightSaber.AddComponent<DummySaber>();
+
+                        controller.transform.Find("MenuHandle")?.gameObject.SetActive(false);
+                    }
+                    if (leftSaber && rightSaber) break;
+                }
+                StartCoroutine(HideOrShowPointer());
+            }
+            catch(Exception e)
+            {
+                Logger.log.Error($"Error generating saber preview\n{e.Message} - {e.StackTrace}");
+            }
+            finally
+            {
+                DestroyGameObject(ref sabers);
+            }
+        }
 
         private void Update()
         {
@@ -137,6 +331,27 @@ namespace CustomSaber.Settings.UI
             }
 
             return null;
+        }
+
+        private void PositionPreviewSaber(Vector3 vector, GameObject saberObject)
+        {
+            if (saberObject && vector != null)
+            {
+                saberObject.transform.localPosition = vector;
+            }
+        }
+
+        private void ClearPreview()
+        {
+            ClearSabers();
+            DestroyGameObject(ref preview);
+            ShowMenuHandles();
+        }
+
+        private void ClearSabers()
+        {
+            DestroyGameObject(ref previewSabers);
+            ClearHandheldSabers();
         }
 
         public void ClearHandheldSabers()
