@@ -21,10 +21,10 @@ namespace CustomSaber.Settings.UI
         public static SaberListViewController Instance;
 
         private bool isGeneratingPreview;
-        private GameObject preview;
+        public GameObject preview;
 
         // Sabers
-        private GameObject previewSabers;
+        public GameObject previewSabers;
         private GameObject leftSaber;
         private GameObject rightSaber;
 
