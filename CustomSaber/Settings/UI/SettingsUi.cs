@@ -12,7 +12,7 @@ namespace CustomSaber.Settings.UI
         {
             if (!created)
             {
-                MenuButton menuButton = new MenuButton("Custom Saber", "Change Custom Sabers Here!", SabersMenuButtonPressed, true);
+                MenuButton menuButton = new MenuButton("Custom Saber", "Change settings directly in UserData/Custom Sabers.json until bug causing a black screen on load is figured out", SabersMenuButtonPressed, false);
                 MenuButtons.instance.RegisterButton(menuButton);
 
                 created = true;
