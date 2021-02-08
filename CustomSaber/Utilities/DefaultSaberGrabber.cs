@@ -57,11 +57,6 @@ namespace CustomSaber.Utilities
                 var loadScene = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
                 while (!loadScene.isDone) yield return null;
 
-                sceneName = "Online";
-                Logger.log.Debug($"Loading {sceneName} scene");
-                loadScene = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-                while (!loadScene.isDone) yield return null;
-
                 sceneName = "GameCore";
                 Logger.log.Debug($"Loading {sceneName} scene");
                 loadScene = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
