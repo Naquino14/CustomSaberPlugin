@@ -278,7 +278,6 @@ namespace CustomSaber.Utilities
                         leftSaber = sabers?.transform.Find("LeftSaber").gameObject;
                     }
 
-
                     StartCoroutine(WaitForSabers(customSaber.Sabers));
                 }
             }
@@ -408,12 +407,6 @@ namespace CustomSaber.Utilities
             bool hideOneSaber = false;
             SaberType hiddenSaberType = SaberType.SaberA;
             if (BS_Utils.Plugin.LevelData.GameplayCoreSceneSetupData.difficultyBeatmap.parentDifficultyBeatmapSet.beatmapCharacteristic.characteristicNameLocalizationKey.Contains("ONE_SABER"))
-            {
-                hideOneSaber = true;
-                hiddenSaberType = BS_Utils.Plugin.LevelData.GameplayCoreSceneSetupData.playerSpecificSettings.leftHanded ? SaberType.SaberB : SaberType.SaberA;
-            }
-
-            if ((BS_Utils.Plugin.LevelData.GameplayCoreSceneSetupData.difficultyBeatmap.parentDifficultyBeatmapSet.beatmapCharacteristic.characteristicNameLocalizationKey.Contains("OneSaber")))
             {
                 hideOneSaber = true;
                 hiddenSaberType = BS_Utils.Plugin.LevelData.GameplayCoreSceneSetupData.playerSpecificSettings.leftHanded ? SaberType.SaberB : SaberType.SaberA;
