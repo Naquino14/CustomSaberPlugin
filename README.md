@@ -1,4 +1,6 @@
-hello feel free to pull this repo if you want, just note it doesnt include dynamic bone stuff
+#I HAVE NO CLUE HOW BSML WORKS, SO I AM NO LONGER MAINTAINING THIS MOD FOR THE TIME BEING!!!
+
+oh yeah feel free to make a pull request I guess
 
 # Custom Sabers
 - Adds the ability to use Custom Sabers in Beat Saber

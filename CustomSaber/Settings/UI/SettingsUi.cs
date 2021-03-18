@@ -12,7 +12,7 @@ namespace CustomSaber.Settings.UI
         {
             if (!created)
             {
-                MenuButton menuButton = new MenuButton("Custom Saber", "Change Custom Sabers Here!", SabersMenuButtonPressed, true);
+                MenuButton menuButton = new MenuButton("Custom Saber", "Change your sabers and some other stuff!", SabersMenuButtonPressed, true);
                 MenuButtons.instance.RegisterButton(menuButton);
 
                 created = true;

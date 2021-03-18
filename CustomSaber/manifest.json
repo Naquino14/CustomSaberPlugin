@@ -5,10 +5,10 @@
     "#![CustomSaber.Resources.description.md]",
     "Default description"
   ],
-  "gameVersion": "1.12.2",
+  "gameVersion": "1.13.2",
   "id": "Custom Sabers",
   "name": "Custom Sabers",
-  "version": "4.4.15",
+  "version": "4.5.0",
   "icon": "CustomSaber.Resources.icon.png",
   "dependsOn": {
     "BSIPA": "^4.1.4",
@@ -16,6 +16,6 @@
     "BS Utils": "^1.7.0"
   },
   "links": {
-    "project-source": "https://github.com/Naquino14/CustomSaberPlugin"
+    "project-source": "https://github.com/redegg89/CustomSaberPlugin"
   }
 }

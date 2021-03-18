@@ -53,6 +53,7 @@ namespace CustomSaber.Settings.UI
         {
             // Dismiss ourselves
             BeatSaberUI.MainFlowCoordinator.DismissFlowCoordinator(this);
+            Destroy(saberPreviewView);
         }
     }
 }

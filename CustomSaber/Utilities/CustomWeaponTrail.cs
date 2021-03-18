@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.XR;
+using BS_Utils;
+using System;
+using Zenject;
 
 namespace CustomSaber.Utilities
 {
@@ -84,6 +87,13 @@ namespace CustomSaber.Utilities
             base.OnEnable();
             StartCoroutine(replaceMaterialCoroutine());
             if (Settings.Configuration.DisableWhitestep) ReflectionUtil.SetField<SaberTrail, float>(this, "_whiteSectionMaxDuration", 0f);
+            if (_inited)
+            {
+                ResetTrailData();
+                _trailRenderer.UpdateMesh(_trailElementCollection, _color);
+            }
+            if (_trailRenderer)
+                _trailRenderer.enabled = true;
         }
 
         protected IEnumerator replaceMaterialCoroutine()
@@ -136,13 +146,16 @@ namespace CustomSaber.Utilities
         private float _whiteSectionMaxDuration;
         private float _lastZScale;
         private object _granularity;
-        private SaberTrailRenderer _trailRendererPrefab;
+        public SaberTrailRenderer _trailRendererPrefab;
         private SaberTrailRenderer _trailRenderer;
         private TrailElementCollection _trailElementCollection;
         private float _lastTrailElementTime;
         private int _framesPassed;
         private int _samplingFrequency;
         private float _sampleStep;
+        private SaberTrailRenderer TrailRendererPrefab;
+
+
 
         public void LateUpdate()
         {
@@ -219,6 +232,12 @@ namespace CustomSaber.Utilities
                 _trailElementCollection.UpdateDistances();
                 _trailRenderer.UpdateMesh(_trailElementCollection, color);
             }
+        }
+
+        public override void OnDisable()
+        {
+            if (_trailRenderer)
+                _trailRenderer.enabled = false;
         }
     }
 
